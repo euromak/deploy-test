@@ -22,7 +22,7 @@ jobs:
       # Deploy
       - name: Deploy via rsync
         run: |
-          rsync -e "ssh -p 20022 -i $HOME/.ssh/key -o StrictHostKeyChecking=no" \
+          rsync -e "ssh -p 22 -i $HOME/.ssh/key -o StrictHostKeyChecking=no" \
                 --archive --compress --delete \
                 . \
                 goldenroru@77.222.56.187:/home/portfolio/public_html/
