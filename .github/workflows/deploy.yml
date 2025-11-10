@@ -1,19 +1,39 @@
-name: Deploy
+name: Deploy to Production Server
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, master ]
+  # Можно добавить триггер для тестового сервера
+  # pull_request:
+  #   branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      # Setup key
-      - run: set -eu
-      #- run: mkdir "$HOME/.ssh"
-      #- run: echo "${{ secrets.key }}" > "$HOME/.ssh/key"
-      #- run: chmod 600 "$HOME/.ssh/key"
-      # Deploy
-      - run: cd /home/g/goldenroru/deploy-test && rsync -e "ssh -p 22 -i ${{secrets.PRIVATE_KEY}} -o StrictHostKeyChecking=no" --archive --compress --delete .  goldenroru@77.222.56.187
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          #passphrase: ${{ secrets.SSH_PASSPHRASE }}   # Добавьте секрет с парольной фразой
+          port: 22
+          script_stop: true
+          script: |
+            echo "🚀 Starting deployment..."
+            cd ~/deploy-test
+            
+            # Получаем последние изменения
+            git fetch origin
+            git reset --hard origin/main
+            
+            # Устанавливаем правильные права
+            #sudo chown -R deployer:www-data .
+            #sudo chmod -R 775 storage bootstrap/cache
+            
+            echo "✅ Deployment completed successfully!
