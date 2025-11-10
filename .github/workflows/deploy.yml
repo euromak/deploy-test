@@ -36,4 +36,4 @@ jobs:
             #sudo chown -R deployer:www-data .
             #sudo chmod -R 775 storage bootstrap/cache
             
-            echo "✅ Deployment completed successfully!
+            echo "✅ Deployment completed successfully!"
